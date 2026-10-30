@@ -1,0 +1,6 @@
+node_modules/
+out/
+media/jsQR.js
+*.vsix
+*.log
+sftp-*.png

@@ -1,0 +1,168 @@
+{
+  "name": "luminecloud-sftp-manager",
+  "displayName": "LumineCloud SFTP Manager",
+  "description": "Quản lý kết nối SFTP của máy chủ Pterodactyl bằng mã QR: lưu hồ sơ trong VS Code và tự động kết nối, mở thư mục từ xa ngay trong Explorer.",
+  "version": "0.6.0",
+  "publisher": "local",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "luminecloud",
+    "pterodactyl",
+    "sftp",
+    "qr",
+    "remote",
+    "ssh"
+  ],
+  "main": "./out/extension.js",
+  "icon": "media/icon.png",
+  "activationEvents": [
+    "onView:luminecloud.home",
+    "onCommand:luminecloud.scanQr",
+    "onCommand:luminecloud.fromClipboard",
+    "onCommand:luminecloud.manualInput",
+    "onCommand:luminecloud.manageProfiles",
+    "onFileSystem:luminesftp",
+    "onStartupFinished",
+    "onCommand:luminecloud.openSharedFolder"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "luminecloud.scanQr",
+        "title": "Quét mã QR để nhập SFTP",
+        "category": "LumineCloud SFTP",
+        "icon": "$(device-camera)"
+      },
+      {
+        "command": "luminecloud.fromClipboard",
+        "title": "Nhập thông tin SFTP từ clipboard",
+        "category": "LumineCloud SFTP",
+        "icon": "$(clippy)"
+      },
+      {
+        "command": "luminecloud.manualInput",
+        "title": "Nhập JSON/chuỗi kết nối thủ công",
+        "category": "LumineCloud SFTP",
+        "icon": "$(json)"
+      },
+      {
+        "command": "luminecloud.manageProfiles",
+        "title": "Quản lý hồ sơ SFTP đã lưu",
+        "category": "LumineCloud SFTP",
+        "icon": "$(server)"
+      },
+      {
+        "command": "luminecloud.refreshHome",
+        "title": "Làm mới danh sách hồ sơ",
+        "category": "LumineCloud SFTP",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "luminecloud.openSharedFolder",
+        "title": "Mở thư mục hồ sơ chia sẻ",
+        "category": "LumineCloud SFTP",
+        "icon": "$(folder-opened)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "luminecloud",
+          "title": "LumineCloud SFTP",
+          "icon": "media/luminecloud.svg"
+        }
+      ]
+    },
+    "views": {
+      "luminecloud": [
+        {
+          "type": "webview",
+          "id": "luminecloud.home",
+          "name": "Kết nối SFTP"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "luminecloud.refreshHome",
+          "when": "view == luminecloud.home",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "luminecloud.refreshHome",
+          "when": "false"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "LumineCloud SFTP",
+      "properties": {
+        "luminecloud.defaultPort": {
+          "type": "number",
+          "default": 2022,
+          "description": "Cổng SFTP mặc định khi dữ liệu QR không có port."
+        },
+        "luminecloud.defaultRemotePath": {
+          "type": "string",
+          "default": "/",
+          "description": "Đường dẫn gốc trên máy chủ khi mở kết nối (nếu hồ sơ không có remotePath)."
+        },
+        "luminecloud.sharedProfiles.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Ghi hồ sơ ra thư mục chia sẻ để app khác đọc/ghi và đồng bộ 2 chiều với VS Code."
+        },
+        "luminecloud.sharedProfiles.path": {
+          "type": "string",
+          "default": "",
+          "description": "Thư mục hồ sơ chia sẻ. Để trống dùng mặc định theo hệ điều hành (Windows: %APPDATA%LumineCloud)."
+        },
+        "luminecloud.sharedProfiles.password": {
+          "type": "string",
+          "enum": [
+            "encrypted",
+            "plain",
+            "none"
+          ],
+          "default": "encrypted",
+          "enumDescriptions": [
+            "Mã hoá AES-256-GCM bằng key.bin trong cùng thư mục (khuyến nghị)",
+            "Ghi mật khẩu dạng plain text",
+            "Không ghi mật khẩu, app ngoài sẽ phải hỏi người dùng"
+          ],
+          "description": "Cách lưu mật khẩu trong file chia sẻ."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "node scripts/clean.mjs && tsc -p ./ && node scripts/copy-assets.mjs",
+    "watch": "tsc -w -p ./",
+    "test": "npm run build && node --test \"out/test/*.test.js\"",
+    "qr": "node scripts/make-qr.mjs",
+    "package": "npm run build && npx --yes @vscode/vsce package --allow-missing-repository"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@types/qrcode": "^1.5.5",
+    "@types/ssh2": "^1.15.6",
+    "@types/ssh2-sftp-client": "^9.0.6",
+    "@types/vscode": "^1.85.0",
+    "jsqr": "^1.4.0",
+    "qrcode": "^1.5.4",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "ssh2-sftp-client": "^12.1.1"
+  }
+}

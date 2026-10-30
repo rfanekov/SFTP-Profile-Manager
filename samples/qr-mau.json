@@ -1,0 +1,11 @@
+{
+  "attributes": {
+    "name": "Minecraft Survival",
+    "identifier": "a1b2c3d4",
+    "sftp_details": {
+      "ip": "node1.example.com",
+      "port": 2022,
+      "username": "user.a1b2c3d4"
+    }
+  }
+}
